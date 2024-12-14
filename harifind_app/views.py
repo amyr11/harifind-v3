@@ -185,3 +185,35 @@ def view_returned_items(request):
     return listings(
         request, models.Item.objects.filter(returned=True), "Returned Items"
     )
+
+
+@login_required(login_url="/login")
+def view_interactions(request):
+    active_subscriptions = request.user.get_subscriptions(active=True)
+    inactive_subscriptions = request.user.get_subscriptions(active=False)
+
+    return render(
+        request,
+        "interactions.html",
+        {
+            "active_subscriptions": active_subscriptions,
+            "inactive_subscriptions": inactive_subscriptions,
+            "title": "My Interactions",
+        },
+    )
+
+
+@login_required(login_url="/login")
+def subscribe(request, item_id):
+    if request.method == "POST":
+        request.user.subscribe(item_id)
+
+    return redirect(f"/interactions")
+
+
+@login_required(login_url="/login")
+def unsubscribe(request, item_id):
+    if request.method == "POST":
+        request.user.unsubscribe(item_id)
+
+    return redirect(f"/interactions")

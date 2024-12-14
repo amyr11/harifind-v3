@@ -10,6 +10,11 @@ class CommentInline(
     extra = 0  # Number of empty forms to display
 
 
+class SubscriptionInline(admin.TabularInline):
+    model = models.Subscription
+    extra = 0
+
+
 # Register your models here
 class ItemAdmin(admin.ModelAdmin):
     list_display = (
@@ -27,7 +32,7 @@ class ItemAdmin(admin.ModelAdmin):
     search_fields = ("name", "category", "location", "type", "date")
     list_filter = ("returned", "category", "location", "type", "date")
     ordering = ("created_at",)
-    inlines = [CommentInline]  # Attach the inline to ItemAdmin
+    inlines = [CommentInline, SubscriptionInline]  # Attach the inline to ItemAdmin
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -47,6 +52,14 @@ class CommentAdmin(admin.ModelAdmin):
     ordering = ("created_at",)
 
 
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ("user", "item", "active", "subscribed_at", "updated_at")
+    search_fields = ("user__username", "item__name")
+    list_filter = ("user", "item")
+    ordering = ("user", "item")
+
+
 admin.site.register(models.Item, ItemAdmin)
 admin.site.register(models.Comment, CommentAdmin)
 admin.site.register(models.User)
+admin.site.register(models.Subscription, SubscriptionAdmin)

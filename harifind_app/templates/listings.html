@@ -14,7 +14,13 @@
         <li>
             <div>
                 <a href="{% url 'view_item' item.id %}">{{ item.name }}</a>
-                <p>Reported by: <a href="{% url 'view_user' item.user.username %}">{{ item.user.username }}</a></p>
+                <p>Reported by: <a href="{% url 'view_user' item.user.username %}">
+                        {% if item.user.id == user.id %}
+                        You
+                        {% else %}
+                        {{ item.user.username }}
+                        {% endif %}
+                    </a></p>
             </div>
             <ul>
                 <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-32" />

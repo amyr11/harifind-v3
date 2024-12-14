@@ -19,4 +19,7 @@ urlpatterns = [
     path("listings/lost/", views.view_lost_items, name="view_lost_items"),
     path("listings/found/", views.view_found_items, name="view_found_items"),
     path("listings/returned/", views.view_returned_items, name="view_returned_items"),
+    path("interactions/", views.view_interactions, name="view_interactions"),
+    path("subscribe/<int:item_id>/", views.subscribe, name="subscribe"),
+    path("unsubscribe/<int:item_id>/", views.unsubscribe, name="unsubscribe"),
 ]

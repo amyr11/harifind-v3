@@ -6,6 +6,38 @@ class User(AbstractUser):
     image = models.ImageField(upload_to="profile_images/", null=True, blank=True)
     year_level = models.IntegerField(null=True, blank=True)
 
+    def get_subscriptions(self, active=None):
+        # Fetch user's subscriptions and related items
+        if active is not None:
+            subscriptions = Subscription.objects.filter(
+                user=self, active=active
+            ).select_related("item")
+        else:
+            subscriptions = Subscription.objects.filter(user=self).select_related(
+                "item"
+            )
+
+        # Sort subscriptions by the item's latest_comment_date field
+        subscribed_items = sorted(
+            [subscription.item for subscription in subscriptions],
+            key=lambda item: item.latest_comment_date or item.created_at,
+            reverse=True,
+        )
+
+        return subscribed_items
+
+    def subscribe(self, item):
+        subscription, created = Subscription.objects.get_or_create(user=self, item=item)
+        if not created:
+            subscription.active = True
+            subscription.save()
+
+    def unsubscribe(self, item):
+        subscription = Subscription.objects.get(user=self, item=item)
+        if subscription:
+            subscription.active = False
+            subscription.save()
+
 
 # Create your models here.
 class Item(models.Model):
@@ -68,9 +100,16 @@ class Item(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    latest_comment_date = models.DateTimeField(null=True, blank=True)
+    latest_comment = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Subscribe back to item created by user every time someone comments
+        self.user.subscribe(self)
 
 
 class Comment(models.Model):
@@ -85,10 +124,35 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Update latest_comment of item
+        self.item.latest_comment_date = self.created_at
+        self.item.latest_comment = self.comment
+        self.item.save()
+        # Subscribe to item
+        self.user.subscribe(self.item)
+
     def __str__(self):
-        length = 20
+        length = 100
         return (
             self.comment[:length] + "..."
             if len(self.comment) > length
             else self.comment
         )
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="subscriptions"
+    )
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="subscribers")
+    active = models.BooleanField(default=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "item")
+
+    def __str__(self):
+        return f"{self.user.username} subscribed to {self.item.name}"
