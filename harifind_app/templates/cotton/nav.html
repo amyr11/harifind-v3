@@ -5,13 +5,6 @@
     <div class="flex-none">
         <ul class="menu menu-horizontal px-1 items-center">
             {% if user.is_authenticated %}
-            <!-- <p class="mr-4">Hi, <span class="font-bold">{{ user.first_name }}</span></p>
-            <li>
-                <form id="logout-form" method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Log out</button>
-                </form>
-            </li> -->
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                     <div class="w-10 rounded-full">
