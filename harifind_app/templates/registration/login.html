@@ -5,7 +5,8 @@
 
 {% block title %}Login{% endblock %}
 {% block heading %}Login{% endblock %}
-{% block subheading %}Don't have an account? <a href="{% url 'register' %}">Register</a>{% endblock %}
+{% block subheading %}Don't have an account? <a href="{% url 'register' %}">Register</a> or <a
+    href="{% url 'password_reset' %}">Reset password</a>{% endblock %}
 
 {% block form %}
 <form method="POST" class="prose">
