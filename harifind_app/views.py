@@ -68,7 +68,7 @@ def report(request, type, template):
             form.instance.user = request.user
             form.instance.type = type
             form.save()
-            return redirect("/settings")
+            return redirect(f"/item/{form.instance.id}")
     else:
         form = forms.ReportItemForm()
 
@@ -117,16 +117,13 @@ def add_comment(request, item_id):
 @login_required(login_url="/login")
 def edit_item(request, item_id):
     item = get_object_or_404(models.Item, id=item_id, user=request.user)
-    if item:
-        form = forms.ReportItemForm(instance=item)
-    else:
-        return redirect("/settings")
+    form = forms.ReportItemForm(instance=item)
 
     if request.method == "POST":
         form = forms.ReportItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
-            return redirect("/settings")
+            return redirect(f"/item/{item_id}")
 
     return render(request, "edit-item.html", {"form": form})
 
@@ -135,10 +132,9 @@ def edit_item(request, item_id):
 def delete_item(request, item_id):
     if request.method == "POST":
         item = get_object_or_404(models.Item, id=item_id, user=request.user)
-        if item:
-            item.delete()
+        item.delete()
 
-    return redirect("/settings")
+    return redirect(f"/user/{request.user.username}")
 
 
 @login_required(login_url="/login")
@@ -159,20 +155,33 @@ def view_user(request, username):
     )
 
 
-def listings(request, items):
-    return render(request, "listings.html", {"items": items})
+def listings(request, items, title):
+    return render(
+        request,
+        "listings.html",
+        {
+            "items": items,
+            "title": title,
+        },
+    )
 
 
 @login_required(login_url="/login")
 def view_lost_items(request):
-    return listings(request, models.Item.objects.filter(type=models.Item.Type.LOST))
+    return listings(
+        request, models.Item.objects.filter(type=models.Item.Type.LOST), "Lost Items"
+    )
 
 
 @login_required(login_url="/login")
 def view_found_items(request):
-    return listings(request, models.Item.objects.filter(type=models.Item.Type.FOUND))
+    return listings(
+        request, models.Item.objects.filter(type=models.Item.Type.FOUND), "Found Items"
+    )
 
 
 @login_required(login_url="/login")
 def view_returned_items(request):
-    return listings(request, models.Item.objects.filter(returned=True))
+    return listings(
+        request, models.Item.objects.filter(returned=True), "Returned Items"
+    )

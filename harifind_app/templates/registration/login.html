@@ -9,7 +9,7 @@
     href="{% url 'password_reset' %}">Reset password</a>{% endblock %}
 
 {% block form %}
-<form method="POST" class="prose">
+<form method="POST">
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-success mt-4">Login</button>
