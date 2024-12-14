@@ -1,0 +1,64 @@
+{% extends 'base/base-nav.html' %}
+
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+{% block title %}{{ item.name }}{% endblock %}
+
+{% block content %}
+<!-- USER DETAILS -->
+<div class="prose">
+    <h1>{{ item.name }}</h1>
+    <p>Reported by: {{ item.user }}</p>
+    {% if item.user == user %}
+    <a href="{% url 'edit_item' item.id %}">Edit</a>
+    {% endif %}
+    <ul>
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" />
+        <li>Type: {{ item.type }}</li>
+        <li>Category: {{ item.category }}</li>
+        <li>Description: {{ item.description }}</li>
+        <li>Date reported: {{ item.date }}</li>
+        <li>Location: {{ item.location }}</li>
+        <li>Returned: {{ item.returned }}</li>
+        <li>Returned to: {{ item.returned_to }}</li>
+        <li>Created at: {{ item.created_at }}</li>
+        <li>Updated at: {{ item.updated_at }}</li>
+    </ul>
+</div>
+
+<div class="prose">
+    <h1>Comments</h1>
+</div>
+{% for comment in item.comments.all %}
+<div class="flex gap-2 items-center">
+    <a href="{% url 'view_user' comment.user.username %}">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full">
+                {% if not comment.user.image %}
+                <img alt="{{ user.username }}"
+                    src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg" />
+                {% else %}
+                <img alt="{{ comment.user.username }}" src="{{ comment.user.image.url }}" />
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    <p>{{ comment.user }}
+        {% if comment.user == item.user %}
+        {% if item.type == "Lost" %}
+        <span>(Owner)</span>
+        {% else %}
+        <span>(Finder)</span>
+        {% endif %}
+        {% endif %}
+        : {{ comment.comment }}
+    </p>
+</div>
+{% endfor %}
+<form method="POST" action="{% url 'add_comment' item.id %}">
+    {% csrf_token %}
+    {{ comment_form|crispy }}
+    <button type="submit">Comment</button>
+</form>
+{% endblock %}

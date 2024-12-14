@@ -49,3 +49,4 @@ class CommentAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Item, ItemAdmin)
 admin.site.register(models.Comment, CommentAdmin)
+admin.site.register(models.User)

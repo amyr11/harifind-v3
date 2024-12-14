@@ -11,6 +11,7 @@ crispy-tailwind==1.0.3
 Django==5.1.4
 django-appconf==1.0.6
 django-browser-reload==1.17.0
+django-cleanup==9.0.0
 django-cotton==1.5.1
 django-crispy-forms==2.3
 django-tailwind==3.8.0

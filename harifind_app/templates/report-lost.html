@@ -1,0 +1,16 @@
+{% extends 'base/base-form.html' %}
+
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+{% block title %}Report lost item{% endblock %}
+{% block heading %}What have you lost?{% endblock %}
+{% block subheading %}Found an item instead? <a href="{% url 'report_found' %}">Report found item</a>{% endblock %}
+
+{% block form %}
+<form method="POST" class="prose" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success mt-4">Submit</button>
+</form>
+{% endblock %}

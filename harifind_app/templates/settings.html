@@ -1,0 +1,34 @@
+{% extends 'base/base-nav.html' %}
+
+{% block extra_head %}
+<script>
+    function confirmDelete() {
+        const confirmation = confirm("Are you sure you want to delete this item?");
+        if (confirmation) {
+            document.getElementById("delete-form").submit();
+        }
+    }
+</script>
+{% endblock %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<!-- USER DETAILS -->
+<div class="prose">
+    <h1>User details</h1>
+    <!-- name -->
+    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+    <!-- username -->
+    <p>Username: {{ user.username }}</p>
+    <!-- yearlevel -->
+    <p>Year level: {{ user.year_level }}</p>
+    <!-- email -->
+    <p>Email: {{ user.email }}</p>
+    <!-- date joined -->
+    <p>Joined: {{ user.date_joined }}</p>
+    <!-- edit profile -->
+    <a href="{% url 'edit_profile' %}" class="btn">Edit profile</a>
+    <a href="{% url 'password_change' %}" class="btn">Change password</a>
+</div>
+{% endblock %}

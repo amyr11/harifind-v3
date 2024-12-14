@@ -17,8 +17,12 @@
 
             <!-- button group -->
             <div class="flex gap-4 lg:gap-8">
-                <button class="btn btn-warning lg:btn-lg">I lost an item</button>
-                <button class="btn btn-success lg:btn-lg">I found an item</button>
+                <a href="{% url 'report_lost' %}">
+                    <button class="btn btn-warning lg:btn-lg">I lost an item</button>
+                </a>
+                <a href="{% url 'report_found' %}">
+                    <button class="btn btn-success lg:btn-lg">I found an item</button>
+                </a>
             </div>
         </div>
 

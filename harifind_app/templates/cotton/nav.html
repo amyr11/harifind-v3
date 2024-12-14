@@ -5,13 +5,36 @@
     <div class="flex-none">
         <ul class="menu menu-horizontal px-1 items-center">
             {% if user.is_authenticated %}
-            <p class="mr-4">Hi, <span class="font-bold">{{ user.first_name }}</span></p>
+            <!-- <p class="mr-4">Hi, <span class="font-bold">{{ user.first_name }}</span></p>
             <li>
                 <form id="logout-form" method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit">Log out</button>
                 </form>
-            </li>
+            </li> -->
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                    <div class="w-10 rounded-full">
+                        {% if not user.image %}
+                        <img alt="{{ user.username }}"
+                            src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg" />
+                        {% else %}
+                        <img alt="{{ user.username }}" src="{{ user.image.url }}" />
+                        {% endif %}
+                    </div>
+                </div>
+                <ul tabindex="0"
+                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-32 p-2 border-2">
+                    <li><a href="{% url 'view_user' user.username %}">Profile</a></li>
+                    <li><a href="{% url 'settings' %}">Settings</a></li>
+                    <form id="logout-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <li>
+                            <button type="submit">Log out</button>
+                        </li>
+                    </form>
+                </ul>
+            </div>
             {% else %}
             <li><a href="{% url 'register' %}">Register</a></li>
             <li><a href="{% url 'login' %}">Login</a></li>

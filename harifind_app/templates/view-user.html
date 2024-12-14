@@ -1,0 +1,70 @@
+{% extends 'base/base-nav.html' %}
+
+{% block extra_head %}
+<script>
+    function confirmDelete() {
+        const confirmation = confirm("Are you sure you want to delete this item?");
+        if (confirmation) {
+            document.getElementById("delete-form").submit();
+        }
+    }
+</script>
+{% endblock %}
+
+{% block title %}{{ viewing_user.username }}{% endblock %}
+
+{% block content %}
+<!-- USER DETAILS -->
+<div class="prose">
+    <h1>{{ viewing_user.first_name }} {{ viewing_user.last_name }}</h1>
+    {% if viewing_user.image %}
+    <img src="{{ viewing_user.image.url }}" alt="{{ viewing_user.first_name }} {{ viewing_user.last_name }}"
+        class="w-32" />
+    {% else %}
+    <img src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg"
+        alt="{{ viewing_user.first_name }} {{ viewing_user.last_name }}" class="w-32" />
+    {% endif %}
+    <!-- email -->
+    <p>Email: {{ viewing_user.email }}</p>
+    <!-- date joined -->
+    <p>Joined: {{ viewing_user.date_joined }}</p>
+    <h1>Statistics</h1>
+    <!-- reported items -->
+    <p>Lost items: {{ lost_count }}</p>
+    <p>Found items: {{ found_count }}</p>
+    <h1>Reported items</h1>
+    <!-- reported items -->
+    <ul>
+        {% for item in viewing_user.reported_items.all %}
+        <li>
+            <div class="flex gap-2">
+                <a href="{% url 'view_item' item.id %}">{{ item.name }}</a>
+                {% if item.user == user %}
+                <span>|</span>
+                <a href="{% url 'edit_item' item.id %}">Edit</a>
+                <span>|</span>
+                <form id="delete-form" method="post" action="{% url 'delete_item' item.id %}">
+                    {% csrf_token %}
+                    <button type="button" onclick="confirmDelete()">
+                        <a>Delete</a>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            <ul>
+                <img src="{{ item.image.url }}" alt="{{ item.name }}" />
+                <li>Type: {{ item.type }}</li>
+                <li>Category: {{ item.category }}</li>
+                <li>Description: {{ item.description }}</li>
+                <li>Date reported: {{ item.date }}</li>
+                <li>Location: {{ item.location }}</li>
+                <li>Returned: {{ item.returned }}</li>
+                <li>Returned to: {{ item.returned_to }}</li>
+                <li>Created at: {{ item.created_at }}</li>
+                <li>Updated at: {{ item.updated_at }}</li>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

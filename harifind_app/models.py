@@ -1,5 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    image = models.ImageField(upload_to="profile_images/", null=True, blank=True)
+    year_level = models.IntegerField(null=True, blank=True)
 
 
 # Create your models here.
@@ -69,7 +74,12 @@ class Item(models.Model):
 
 
 class Comment(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
+    item = models.ForeignKey(
+        Item,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="comments",
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
