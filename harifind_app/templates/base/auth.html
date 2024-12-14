@@ -1,0 +1,12 @@
+{% extends 'base/base-nav.html' %}
+
+{% block content %}
+<div class="space-y-4 mx-auto max-w-xl">
+    <div class="prose space-y-2">
+        <h1 class="m-0">{% block heading %}{% endblock %}</h1>
+        <p class="m-0">{% block subheading %}{% endblock %}</p>
+    </div>
+    {% block form %}
+    {% endblock %}
+</div>
+{% endblock %}

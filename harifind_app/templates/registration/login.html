@@ -1,0 +1,16 @@
+{% extends 'base/auth.html' %}
+
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+
+{% block title %}Login{% endblock %}
+{% block heading %}Login{% endblock %}
+{% block subheading %}Don't have an account? <a href="{% url 'register' %}">Register</a>{% endblock %}
+
+{% block form %}
+<form method="POST" class="prose">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success mt-4">Login</button>
+</form>
+{% endblock %}

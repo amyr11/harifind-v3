@@ -1,0 +1,21 @@
+<div class="navbar bg-base-100 border-b-2">
+    <div class="flex-1">
+        <a class="btn btn-ghost text-xl" href="/">Harifind</a>
+    </div>
+    <div class="flex-none">
+        <ul class="menu menu-horizontal px-1 items-center">
+            {% if user.is_authenticated %}
+            <p class="mr-4">Hi, <span class="font-bold">{{ user.first_name }}</span></p>
+            <li>
+                <form id="logout-form" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Log out</button>
+                </form>
+            </li>
+            {% else %}
+            <li><a href="{% url 'register' %}">Register</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

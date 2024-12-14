@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="h-fit lg:h-screen overflow-clip">
+    <c-nav />
+    <!-- HERO -->
+    <section>
+        <div class="p-8 flex flex-col justify-center items-center gap-8 lg:gap-12 pt-16 lg:pt-32">
+            <!-- heading -->
+            <div class="prose min-w-fit space-y-2">
+                <p class="text-center text-xl lg:text-2xl m-0">Welcome to the virtual bridge where</p>
+                <h1 class="text-center lg:text-5xl">Lost items and their finders cross paths.</h1>
+            </div>
+
+            <!-- button group -->
+            <div class="flex gap-4 lg:gap-8">
+                <button class="btn btn-warning lg:btn-lg">I lost an item</button>
+                <button class="btn btn-success lg:btn-lg">I found an item</button>
+            </div>
+        </div>
+
+        <!-- image -->
+        <div class="relative">
+            <img src="{% static 'plm.png' %}" alt="hero" class="w-full" />
+            <!-- gradient base from bottom -->
+            <div class="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-base-100 to-transparent"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
