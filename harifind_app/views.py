@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from . import forms
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout
 from . import models
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -22,10 +23,8 @@ def register(request):
     return render(request, "register/register.html", {"form": form})
 
 
+@login_required(login_url="/login")
 def edit_profile(request):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     if request.method == "POST":
         form = forms.EditProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
@@ -37,10 +36,8 @@ def edit_profile(request):
     return render(request, "edit-profile.html", {"form": form})
 
 
+@login_required(login_url="/login")
 def change_password(request):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     if request.method == "POST":
         form = forms.ChangePasswordForm(request.user, request.POST)
         if form.is_valid():
@@ -52,21 +49,18 @@ def change_password(request):
     return render(request, "change-password.html", {"form": form})
 
 
+@login_required(login_url="/login")
 def logout_view(request):
     logout(request)
     return redirect("/")
 
 
+@login_required(login_url="/login")
 def settings(request):
-    if not request.user.is_authenticated:
-        return redirect("/login")
     return render(request, "settings.html")
 
 
 def report(request, type, template):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     if request.method == "POST":
         form = forms.ReportItemForm(request.POST, request.FILES)
         if form.is_valid():
@@ -81,18 +75,18 @@ def report(request, type, template):
     return render(request, template, {"form": form})
 
 
+@login_required(login_url="/login")
 def report_lost(request):
     return report(request, models.Item.Type.LOST, "report-lost.html")
 
 
+@login_required(login_url="/login")
 def report_found(request):
     return report(request, models.Item.Type.FOUND, "report-found.html")
 
 
+@login_required(login_url="/login")
 def view_item(request, item_id):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     item = get_object_or_404(models.Item, id=item_id)
     comment_form = forms.CommentForm()
 
@@ -106,10 +100,8 @@ def view_item(request, item_id):
     )
 
 
+@login_required(login_url="/login")
 def add_comment(request, item_id):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     item = get_object_or_404(models.Item, id=item_id)
     if request.method == "POST":
         form = forms.CommentForm(request.POST)
@@ -122,10 +114,8 @@ def add_comment(request, item_id):
     return redirect(f"/item/{item_id}")
 
 
+@login_required(login_url="/login")
 def edit_item(request, item_id):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     item = get_object_or_404(models.Item, id=item_id, user=request.user)
     if item:
         form = forms.ReportItemForm(instance=item)
@@ -141,10 +131,8 @@ def edit_item(request, item_id):
     return render(request, "edit-item.html", {"form": form})
 
 
+@login_required(login_url="/login")
 def delete_item(request, item_id):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     if request.method == "POST":
         item = get_object_or_404(models.Item, id=item_id, user=request.user)
         if item:
@@ -153,10 +141,8 @@ def delete_item(request, item_id):
     return redirect("/settings")
 
 
+@login_required(login_url="/login")
 def view_user(request, username):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     viewing_user = get_object_or_404(models.User, username=username)
     lost_count = viewing_user.reported_items.filter(type=models.Item.Type.LOST).count()
     found_count = viewing_user.reported_items.filter(
@@ -174,19 +160,19 @@ def view_user(request, username):
 
 
 def listings(request, items):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-
     return render(request, "listings.html", {"items": items})
 
 
+@login_required(login_url="/login")
 def view_lost_items(request):
     return listings(request, models.Item.objects.filter(type=models.Item.Type.LOST))
 
 
+@login_required(login_url="/login")
 def view_found_items(request):
     return listings(request, models.Item.objects.filter(type=models.Item.Type.FOUND))
 
 
+@login_required(login_url="/login")
 def view_returned_items(request):
     return listings(request, models.Item.objects.filter(returned=True))
