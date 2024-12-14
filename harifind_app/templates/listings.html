@@ -1,0 +1,32 @@
+{% extends 'base/base-nav.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+<ul class="prose">
+    {% if not items %}
+    <li>No items found</li>
+    {% endif %}
+
+    {% for item in items %}
+    <li>
+        <div>
+            <a href="{% url 'view_item' item.id %}">{{ item.name }}</a>
+            <p>Reported by: <a href="{% url 'view_user' item.user.username %}">{{ item.user.username }}</a></p>
+        </div>
+        <ul>
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-32" />
+            <li>Type: {{ item.type }}</li>
+            <li>Category: {{ item.category }}</li>
+            <li>Description: {{ item.description }}</li>
+            <li>Date reported: {{ item.date }}</li>
+            <li>Location: {{ item.location }}</li>
+            <li>Returned: {{ item.returned }}</li>
+            <li>Returned to: {{ item.returned_to }}</li>
+            <li>Created at: {{ item.created_at }}</li>
+            <li>Updated at: {{ item.updated_at }}</li>
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

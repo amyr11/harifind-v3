@@ -171,3 +171,22 @@ def view_user(request, username):
             "found_count": found_count,
         },
     )
+
+
+def listings(request, items):
+    if not request.user.is_authenticated:
+        return redirect("/login")
+
+    return render(request, "listings.html", {"items": items})
+
+
+def view_lost_items(request):
+    return listings(request, models.Item.objects.filter(type=models.Item.Type.LOST))
+
+
+def view_found_items(request):
+    return listings(request, models.Item.objects.filter(type=models.Item.Type.FOUND))
+
+
+def view_returned_items(request):
+    return listings(request, models.Item.objects.filter(returned=True))

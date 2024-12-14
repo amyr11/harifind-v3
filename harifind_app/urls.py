@@ -16,4 +16,7 @@ urlpatterns = [
     path("item/delete/<int:item_id>/", views.delete_item, name="delete_item"),
     path("item/comment/<int:item_id>/", views.add_comment, name="add_comment"),
     path("user/<str:username>/", views.view_user, name="view_user"),
+    path("listings/lost/", views.view_lost_items, name="view_lost_items"),
+    path("listings/found/", views.view_found_items, name="view_found_items"),
+    path("listings/returned/", views.view_returned_items, name="view_returned_items"),
 ]
