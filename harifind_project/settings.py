@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from shutil import which
 
 load_dotenv()
 
@@ -38,6 +39,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+NPM_BIN_PATH = which("npm")
 
 # Application definition
 
