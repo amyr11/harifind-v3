@@ -21,7 +21,11 @@
         <li>Date reported: {{ item.date }}</li>
         <li>Location: {{ item.location }}</li>
         <li>Returned: {{ item.returned }}</li>
+        {% if item.type == "Lost" %}
+        <li>Found by: {{ item.found_by }}</li>
+        {% else %}
         <li>Returned to: {{ item.returned_to }}</li>
+        {% endif %}
         <li>Created at: {{ item.created_at }}</li>
         <li>Updated at: {{ item.updated_at }}</li>
     </ul>
@@ -29,6 +33,24 @@
 
 <div class="prose">
     <h1>Comments</h1>
+    {% if item.user == user %}
+    {% if item.type == "Found" %}
+    <form method="POST" action="{% url 'returned_item' item.id %}">
+        {% csrf_token %}
+        {{ return_form|crispy }}
+        <button type="submit">Return</button>
+    </form>
+    {% else %}
+    <form method="POST" action="{% url 'found_item' item.id %}">
+        {% csrf_token %}
+        {{ found_form|crispy }}
+        <button type="submit">Confirm</button>
+    </form>
+    {% endif %}
+    {% endif %}
+    {% if item.returned %}
+    <p>Returned on: {{ item.returned_date }}</p>
+    {% endif %}
 </div>
 {% for comment in item.comments.all %}
 <div class="flex gap-2 items-center">

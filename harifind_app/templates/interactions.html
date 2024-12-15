@@ -44,6 +44,14 @@
                 <!-- latest comment on the item -->
                 <li>Latest comment date: {{ item.latest_comment_date }}</li>
                 <li>Latest comment: {{ item.latest_comment }}</li>
+                {% if item.returned %}
+                {% if item.type == "Lost" %}
+                <li>Found by: {{ item.found_by }}</li>
+                {% else %}
+                <li>Returned to: {{ item.returned_to }}</li>
+                {% endif %}
+                <li>Returned date: {{ item.returned_date }}</li>
+                {% endif %}
             </ul>
         </li>
         {% endfor %}

@@ -98,6 +98,14 @@ class Item(models.Model):
         null=True,
         blank=True,
     )
+    found_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="found_items",
+        null=True,
+        blank=True,
+    )
+    returned_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     latest_comment_date = models.DateTimeField(null=True, blank=True)

@@ -89,6 +89,8 @@ def report_found(request):
 def view_item(request, item_id):
     item = get_object_or_404(models.Item, id=item_id)
     comment_form = forms.CommentForm()
+    return_form = forms.ReturnForm(instance=item)
+    found_form = forms.FoundForm(instance=item)
 
     return render(
         request,
@@ -96,6 +98,8 @@ def view_item(request, item_id):
         {
             "item": item,
             "comment_form": comment_form,
+            "return_form": return_form,
+            "found_form": found_form,
         },
     )
 
@@ -112,6 +116,26 @@ def add_comment(request, item_id):
             form.save()
 
     return redirect(f"/item/{item_id}")
+
+
+@login_required(login_url="/login")
+def return_to(request, item_id):
+    return return_item(request, item_id, forms.ReturnForm)
+
+
+@login_required(login_url="/login")
+def found_by(request, item_id):
+    return return_item(request, item_id, forms.FoundForm)
+
+
+def return_item(request, item_id, form):
+    item = get_object_or_404(models.Item, id=item_id)
+
+    if request.method == "POST":
+        form = form(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect(f"/item/{item_id}")
 
 
 @login_required(login_url="/login")
@@ -169,21 +193,31 @@ def listings(request, items, title):
 @login_required(login_url="/login")
 def view_lost_items(request):
     return listings(
-        request, models.Item.objects.filter(type=models.Item.Type.LOST), "Lost Items"
+        request,
+        models.Item.objects.filter(type=models.Item.Type.LOST, returned=False).order_by(
+            "-updated_at"
+        ),
+        "Lost Items",
     )
 
 
 @login_required(login_url="/login")
 def view_found_items(request):
     return listings(
-        request, models.Item.objects.filter(type=models.Item.Type.FOUND), "Found Items"
+        request,
+        models.Item.objects.filter(
+            type=models.Item.Type.FOUND, returned=False
+        ).order_by("-updated_at"),
+        "Found Items",
     )
 
 
 @login_required(login_url="/login")
 def view_returned_items(request):
     return listings(
-        request, models.Item.objects.filter(returned=True), "Returned Items"
+        request,
+        models.Item.objects.filter(returned=True).order_by("-returned_date"),
+        "Returned Items",
     )
 
 
