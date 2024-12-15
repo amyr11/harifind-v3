@@ -7,7 +7,7 @@
 {% block heading %}Edit profile{% endblock %}
 
 {% block form %}
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" id="{{ form.helper.form_id }}" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-success mt-4">Save</button>

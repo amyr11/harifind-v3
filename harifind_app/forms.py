@@ -5,6 +5,8 @@ from django.contrib.auth.forms import (
     PasswordChangeForm,
 )
 from . import models
+from crispy_forms.layout import Layout, Field
+from crispy_forms.helper import FormHelper
 
 
 class RegisterForm(UserCreationForm):
@@ -37,7 +39,7 @@ class EditProfileForm(forms.ModelForm):
     image = forms.ImageField(required=False)
     year_level = forms.IntegerField(required=True)
     degree = forms.ChoiceField(choices=models.User.Degree.choices, required=True)
-
+ 
     class Meta:
         model = models.User
         fields = [
@@ -49,6 +51,17 @@ class EditProfileForm(forms.ModelForm):
             "year_level",
             "degree",
         ]
+    
+    def __init__(self, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-contact-form'
+
+        self.helper.layout = Layout(
+            Field('first_name', css_class='form-control'),
+            Field('email', css_class='form-control'),
+            Field('degree', css_class='form-control'),
+        )
 
 
 class ChangePasswordForm(PasswordChangeForm):
