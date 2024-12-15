@@ -189,12 +189,12 @@ def listings(request, items, title):
         },
     )
 
-
 @login_required(login_url="/login")
 def view_lost_items(request):
+    query = request.GET.get("query", "")
     return listings(
         request,
-        models.Item.objects.filter(type=models.Item.Type.LOST, returned=False).order_by(
+        models.Item.objects.filter(name__contains=query, type=models.Item.Type.LOST, returned=False).order_by(
             "-updated_at"
         ),
         "Lost Items",
@@ -203,9 +203,11 @@ def view_lost_items(request):
 
 @login_required(login_url="/login")
 def view_found_items(request):
+    query = request.GET.get("query", "")
     return listings(
         request,
         models.Item.objects.filter(
+            name__contains=query,
             type=models.Item.Type.FOUND, returned=False
         ).order_by("-updated_at"),
         "Found Items",
@@ -214,9 +216,10 @@ def view_found_items(request):
 
 @login_required(login_url="/login")
 def view_returned_items(request):
+    query = request.GET.get("query", "")
     return listings(
         request,
-        models.Item.objects.filter(returned=True).order_by("-returned_date"),
+        models.Item.objects.filter(name__contains=query, returned=True).order_by("-returned_date"),
         "Returned Items",
     )
 
