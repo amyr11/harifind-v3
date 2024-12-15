@@ -9,7 +9,9 @@
     <p>No items found</p>
     {% endif %}
 </div>
-
+<div class="flex justify-end items-center">
+    <c-search />
+</div>
 <div class="pt-6 mx-auto max-w-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
     {% for item in items %}
     <c-listing-card id="{{ item.id }}" username="{{ item.user.username }}" location="{{ item.location }}"
