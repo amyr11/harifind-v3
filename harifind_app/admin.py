@@ -15,6 +15,22 @@ class SubscriptionInline(admin.TabularInline):
     extra = 0
 
 
+class UserAdmin(admin.ModelAdmin):
+    list_display = (
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "year_level",
+        "degree",
+        "date_joined",
+        "last_login",
+    )
+    search_fields = ("username", "email", "first_name", "last_name")
+    list_filter = ("is_staff", "is_active", "date_joined", "last_login")
+    ordering = ("date_joined",)
+
+
 # Register your models here
 class ItemAdmin(admin.ModelAdmin):
     list_display = (
@@ -59,7 +75,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     ordering = ("user", "item")
 
 
+admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Item, ItemAdmin)
 admin.site.register(models.Comment, CommentAdmin)
-admin.site.register(models.User)
 admin.site.register(models.Subscription, SubscriptionAdmin)

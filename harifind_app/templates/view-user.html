@@ -23,6 +23,10 @@
     {% endif %}
     <!-- email -->
     <p>Email: {{ viewing_user.email }}</p>
+    <!-- year level -->
+    <p>Year level: {{ viewing_user.year_level }}</p>
+    <!-- degree -->
+    <p>Degree: {{ viewing_user.get_degree_display }}</p>
     <!-- date joined -->
     <p>Joined: {{ viewing_user.date_joined }}</p>
     <h1>Statistics</h1>

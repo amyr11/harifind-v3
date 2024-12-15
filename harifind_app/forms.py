@@ -13,6 +13,7 @@ class RegisterForm(UserCreationForm):
     last_name = forms.CharField(max_length=100)
     image = forms.ImageField(required=False)
     year_level = forms.IntegerField(required=True)
+    degree = forms.ChoiceField(choices=models.User.Degree.choices, required=True)
 
     class Meta:
         model = models.User
@@ -23,6 +24,7 @@ class RegisterForm(UserCreationForm):
             "first_name",
             "last_name",
             "year_level",
+            "degree",
             "password1",
             "password2",
         ]
@@ -34,6 +36,7 @@ class EditProfileForm(forms.ModelForm):
     last_name = forms.CharField(max_length=100)
     image = forms.ImageField(required=False)
     year_level = forms.IntegerField(required=True)
+    degree = forms.ChoiceField(choices=models.User.Degree.choices, required=True)
 
     class Meta:
         model = models.User
@@ -44,6 +47,7 @@ class EditProfileForm(forms.ModelForm):
             "first_name",
             "last_name",
             "year_level",
+            "degree",
         ]
 
 
