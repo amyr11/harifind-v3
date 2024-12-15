@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <ul tabindex="0"
-                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-32 p-2 border-2">
+                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-32 p-2 border-2 border-gray-500/5">
                     <li><a href="{% url 'view_user' user.username %}">Profile</a></li>
                     <li><a href="{% url 'settings' %}">Settings</a></li>
                     <form id="logout-form" method="post" action="{% url 'logout' %}">
