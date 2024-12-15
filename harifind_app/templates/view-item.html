@@ -9,7 +9,13 @@
 <!-- USER DETAILS -->
 <div class="prose">
     <h1>{{ item.name }}</h1>
-    <p>Reported by: {{ item.user }}</p>
+    <p>Reported by: <a href="{% url 'view_user' item.user.username %}">
+            {% if item.user.id == user.id %}
+            You
+            {% else %}
+            {{ item.user.username }}
+            {% endif %}
+        </a></p>
     {% if item.user == user %}
     <a href="{% url 'edit_item' item.id %}">Edit</a>
     {% endif %}
