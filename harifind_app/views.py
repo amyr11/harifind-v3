@@ -88,6 +88,7 @@ def report_found(request):
 @login_required(login_url="/login")
 def view_item(request, item_id):
     item = get_object_or_404(models.Item, id=item_id)
+    comments = models.Comment.objects.filter(item=item).order_by("-created_at")
     comment_form = forms.CommentForm()
     return_form = forms.ReturnForm(instance=item)
     found_form = forms.FoundForm(instance=item)
@@ -97,6 +98,7 @@ def view_item(request, item_id):
         "view-item.html",
         {
             "item": item,
+            "comments": comments,
             "comment_form": comment_form,
             "return_form": return_form,
             "found_form": found_form,
