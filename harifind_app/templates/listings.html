@@ -3,20 +3,26 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<div class="prose">
-    <h1>{{ title }}</h1>
+<div class="flex flex-col gap-4 sm:gap-0 sm:flex-row justify-between sm:items-center">
+    <div class="prose">
+        <h1>{{ title }}</h1>
+    </div>
+    <c-search query="{{ query }}" />
+</div>
+{% if query %}
+<p class="mt-2 text-sm">
+    <span class="text-black/50">Search results for </span>
+    <span class="font-bold">{{ query }}</span>
+</p>
+{% endif %}
+<div class="pt-6 mx-auto max-w-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {% if not items %}
-    <p>No items found</p>
+    <div class="prose">
+        <p>No items found</p>
+    </div>
     {% endif %}
-</div>
-<div class="flex justify-end items-center">
-    <c-search />
-</div>
-<div class="pt-6 mx-auto max-w-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
     {% for item in items %}
-    <c-listing-card id="{{ item.id }}" username="{{ item.user.username }}" location="{{ item.location }}"
-        name="{{ item.name }}" image="{{ item.image.url }}" description="{{ item.description }}"
-        date="{{ item.date }}" />
+    <c-listing-card :item="{{ item }}" />
     {% endfor %}
 </div>
 {% endblock %}

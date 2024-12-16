@@ -4,6 +4,7 @@ from django.contrib.auth import logout
 from . import models
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 
 # Create your views here.
@@ -179,25 +180,37 @@ def view_user(request, username):
     )
 
 
-def listings(request, items, title):
+def listings(request, items, title, query=""):
     return render(
         request,
         "listings.html",
         {
             "items": items,
             "title": title,
+            "query": query,
         },
     )
+
+
+def item_query(query):
+    return (
+        Q(name__icontains=query)
+        | Q(description__icontains=query)
+        | Q(category__icontains=query)
+        | Q(location__icontains=query)
+    )
+
 
 @login_required(login_url="/login")
 def view_lost_items(request):
     query = request.GET.get("query", "")
     return listings(
         request,
-        models.Item.objects.filter(name__contains=query, type=models.Item.Type.LOST, returned=False).order_by(
-            "-updated_at"
-        ),
+        models.Item.objects.filter(
+            item_query(query) & Q(type=models.Item.Type.LOST, returned=False)
+        ).order_by("-updated_at"),
         "Lost Items",
+        query,
     )
 
 
@@ -207,10 +220,10 @@ def view_found_items(request):
     return listings(
         request,
         models.Item.objects.filter(
-            name__contains=query,
-            type=models.Item.Type.FOUND, returned=False
+            item_query(query) & Q(type=models.Item.Type.FOUND, returned=False)
         ).order_by("-updated_at"),
         "Found Items",
+        query,
     )
 
 
@@ -219,8 +232,11 @@ def view_returned_items(request):
     query = request.GET.get("query", "")
     return listings(
         request,
-        models.Item.objects.filter(name__contains=query, returned=True).order_by("-returned_date"),
-        "Returned Items",
+        models.Item.objects.filter(item_query(query) & Q(returned=True)).order_by(
+            "-updated_at"
+        ),
+        "Lost Items",
+        query,
     )
 
 
