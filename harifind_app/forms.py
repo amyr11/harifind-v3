@@ -79,7 +79,9 @@ class ReportItemForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-    comment = forms.CharField(label="", widget=forms.Textarea(attrs={"rows": 1}))
+    comment = forms.CharField(
+        label="", widget=forms.TextInput(attrs={"placeholder": "Add comment..."})
+    )
 
     class Meta:
         model = models.Comment

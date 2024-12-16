@@ -6,87 +6,227 @@
 {% block title %}{{ item.name }}{% endblock %}
 
 {% block content %}
-<!-- USER DETAILS -->
-<div class="prose">
-    <h1>{{ item.name }}</h1>
-    <p>Reported by: <a href="{% url 'view_user' item.user.username %}">
-            {% if item.user.id == user.id %}
-            You
-            {% else %}
-            {{ item.user.username }}
-            {% endif %}
-        </a></p>
-    {% if item.user == user %}
-    <a href="{% url 'edit_item' item.id %}">Edit</a>
-    {% endif %}
-    <ul>
-        <img src="{{ item.image.url }}" alt="{{ item.name }}" />
-        <li>Type: {{ item.type }}</li>
-        <li>Category: {{ item.category }}</li>
-        <li>Description: {{ item.description }}</li>
-        <li>Date reported: {{ item.date }}</li>
-        <li>Location: {{ item.location }}</li>
-        <li>Returned: {{ item.returned }}</li>
-        {% if item.type == "Lost" %}
-        <li>Found by: {{ item.found_by }}</li>
-        {% else %}
-        <li>Returned to: {{ item.returned_to }}</li>
-        {% endif %}
-        <li>Created at: {{ item.created_at }}</li>
-        <li>Updated at: {{ item.updated_at }}</li>
-    </ul>
-</div>
-
-<div class="prose">
-    <h1>Comments</h1>
-    {% if item.user == user %}
-    {% if item.type == "Found" %}
-    <form method="POST" action="{% url 'returned_item' item.id %}">
-        {% csrf_token %}
-        {{ return_form|crispy }}
-        <button type="submit">Return</button>
-    </form>
-    {% else %}
-    <form method="POST" action="{% url 'found_item' item.id %}">
-        {% csrf_token %}
-        {{ found_form|crispy }}
-        <button type="submit">Confirm</button>
-    </form>
-    {% endif %}
-    {% endif %}
-    {% if item.returned %}
-    <p>Returned on: {{ item.returned_date }}</p>
-    {% endif %}
-</div>
-{% for comment in item.comments.all %}
-<div class="flex gap-2 items-center">
-    <a href="{% url 'view_user' comment.user.username %}">
-        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-            <div class="w-10 rounded-full">
-                {% if not comment.user.image %}
-                <img alt="{{ user.username }}"
-                    src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg" />
+<div class="flex flex-col gap-4 max-w-5xl mx-auto">
+    <c-light-card>
+        <div class="flex flex-col gap-4">
+            <div class="grid grid-cols-2 gap-4 sm:gap-8">
+                <!-- IMAGE SECTION -->
+                <div class="col-span-2 sm:col-span-1">
+                    <div class="avatar">
+                        <div class="rounded-xl border-2 border-gray-500/10">
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="sm:max-w-md" />
+                        </div>
+                    </div>
+                </div>
+                <!-- ITEM DETAILS SECTION -->
+                <div class="col-span-2 sm:col-span-1 flex flex-col gap-4 relative">
+                    <!-- EDIT BUTTON -->
+                    {% if item.user == user %}
+                    <a href="{% url 'edit_item' item.id %}" class="absolute top-0 right-0 btn btn-square btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                    </a>
+                    {% endif %}
+                    <div class="flex flex-col gap-2">
+                        <!-- badge -->
+                        {% if not item.returned %}
+                        <c-lg-type-badge type="{{ item.type }}" />
+                        {% else %}
+                        <c-lg-type-badge type="Returned" />
+                        {% endif %}
+                        <!-- item name -->
+                        <h1 class="text-2xl sm:text-4xl font-bold">{{ item.name }}</h1>
+                        <!-- reported by -->
+                        <div>
+                            <p>
+                                <span class="text-sm text-black/50">
+                                    Reported
+                                    {% if item.returned %}
+                                    {{ item.type.lower }}
+                                    {% endif %}
+                                    by
+                                </span>
+                                <a class="text-sm font-medium" href="{% url 'view_user' item.user.username %}">
+                                    {% if item.user.id == user.id %}
+                                    You
+                                    {% else %}
+                                    @{{ item.user.username }}
+                                    {% endif %}
+                                </a>
+                            </p>
+                            {% if item.returned %}
+                            <p>
+                                {% if item.type == "Lost" %}
+                                <span class="text-sm text-black/50">Found by </span>
+                                <a href="{% url 'view_user' item.found_by.username %}" class="text-sm font-medium">@{{
+                                    item.found_by.username }}</a>
+                                <span class="text-sm text-black/50">on </span>
+                                <span class="text-sm font-medium">{{ item.returned_date }}</span>
+                                {% else %}
+                                <span class="text-sm text-black/50">Returned to </span>
+                                <a href="{% url 'view_user' item.returned_to.username %}"
+                                    class="text-sm font-medium">@{{
+                                    item.returned_to.username }}</a>
+                                <span class="text-sm text-black/50">on </span>
+                                <span class="text-sm font-medium">{{ item.returned_date }}</span>
+                                {% endif %}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <!-- item details -->
+                        <c-icon-text>
+                            <c-slot name="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+                                </svg>
+                            </c-slot>
+                            <c-slot name="text">{{ item.category }}</c-slot>
+                        </c-icon-text>
+                        <c-icon-text>
+                            <c-slot name="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                </svg>
+                            </c-slot>
+                            <c-slot name="text">{{ item.location }}</c-slot>
+                        </c-icon-text>
+                        <c-icon-text>
+                            <c-slot name="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                                </svg>
+                            </c-slot>
+                            <c-slot name="text">{{ item.date }}</c-slot>
+                        </c-icon-text>
+                    </div>
+                    <!-- item description -->
+                    <c-icon-text>
+                        <c-slot name="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5" />
+                            </svg>
+                        </c-slot>
+                        <c-slot name="text">{{ item.description }}</c-slot>
+                    </c-icon-text>
+                </div>
+            </div>
+            <!-- RETURN SECTION -->
+            <!-- return form -->
+            {% if item.user == user %}
+            <div>
+                {% if item.type == "Found" %}
+                <form method="POST" action="{% url 'returned_item' item.id %}"
+                    class="flex gap-2 justify-between items-center">
+                    {% csrf_token %}
+                    <div class="w-full h-full">
+                        {{ return_form|crispy }}
+                    </div>
+                    <button class="btn mt-4" type="submit">Return</button>
+                </form>
                 {% else %}
-                <img alt="{{ comment.user.username }}" src="{{ comment.user.image.url }}" />
+                <form method="POST" action="{% url 'found_item' item.id %}"
+                    class="flex gap-2 justify-between items-center">
+                    {% csrf_token %}
+                    <div class="w-full h-full">
+                        {{ found_form|crispy }}
+                    </div>
+                    <button class="btn mt-4" type="submit">Confirm</button>
+                </form>
                 {% endif %}
             </div>
+            {% endif %}
         </div>
-    </a>
-    <p>{{ comment.user }}
-        {% if comment.user == item.user %}
-        {% if item.type == "Lost" %}
-        <span>(Owner)</span>
-        {% else %}
-        <span>(Finder)</span>
-        {% endif %}
-        {% endif %}
-        : {{ comment.comment }}
-    </p>
+    </c-light-card>
+    <!-- COMMENT SECTION -->
+    <c-light-card>
+        <div class="flex flex-col gap-4">
+            <h2 class="text-xl font-medium">{{ item.comments.count }} Comments</h2>
+            <div class="flex flex-col gap-4">
+                <!-- comment input -->
+                <div class="flex gap-2 items-center">
+                    <!-- user image -->
+                    <a href="{% url 'view_user' user.username %}">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                            <div class="w-10 rounded-full">
+                                {% if not user.image %}
+                                <img alt="{{ user.username }}"
+                                    src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg" />
+                                {% else %}
+                                <img alt="{{ user.username }}" src="{{ user.image.url }}" />
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    <!-- user comment -->
+                    <div class="w-full">
+                        <form method="POST" action="{% url 'add_comment' item.id %}"
+                            class="flex gap-2 justify-between items-center">
+                            {% csrf_token %}
+                            <div class="w-full h-full mt-3">
+                                {{ comment_form|crispy }}
+                            </div>
+                            <button class="btn" type="submit">Comment</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- comment list -->
+                {% for comment in comments %}
+                <div class="flex gap-2 items-start">
+                    <!-- user image -->
+                    <a href="{% url 'view_user' comment.user.username %}">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                            <div class="w-10 rounded-full">
+                                {% if not comment.user.image %}
+                                <img alt="{{ user.username }}"
+                                    src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg" />
+                                {% else %}
+                                <img alt="{{ comment.user.username }}" src="{{ comment.user.image.url }}" />
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    <!-- user comment -->
+                    <div class="flex flex-col gap-1">
+                        <!-- username -->
+                        <div class="flex flex-col sm:flex-row sm:gap-2 sm:items-center">
+                            <div>
+                                <a class="text-sm font-medium" href="{% url 'view_user' item.user.username %}">
+                                    @{{ comment.user.username }}
+                                </a>
+                                {% if comment.user == item.user %}
+                                <span class="badge badge-success">
+                                    {% if item.type == "Lost" %}
+                                    Owner
+                                    {% else %}
+                                    Finder
+                                    {% endif %}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <span class="text-sm text-black/50">{{ comment.updated_at }}</span>
+                        </div>
+                        <p>{{ comment.comment }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </c-light-card>
 </div>
-{% endfor %}
-<form method="POST" action="{% url 'add_comment' item.id %}">
-    {% csrf_token %}
-    {{ comment_form|crispy }}
-    <button type="submit">Comment</button>
-</form>
 {% endblock %}
