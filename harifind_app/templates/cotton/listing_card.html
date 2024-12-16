@@ -1,0 +1,75 @@
+<a class="no-underline block" href="{% url 'view_item' item.id %}">
+    <div
+        class="w-fill transform transition-transform duration-150 hover:scale-105 bg-white/50 rounded-xl overflow-clip border-2 border-gray-500/10">
+        <figure class="m-0">
+            <img class="w-full h-40 object-cover" src="{{ item.image.url }}" alt="{{ name }}" />
+        </figure>
+        <div class="p-4">
+            <span class="flex gap-1 items-center mb-2">
+                {% if not item.user.image %}
+                <div class="avatar">
+                    <div class="w-5 rounded-full">
+                        <img src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg"
+                            alt="{{ item.user.username }}" />
+                    </div>
+                </div>
+                {% else %}
+                <div class="avatar">
+                    <div class="w-5 rounded-full">
+                        <img src="{{ item.user.image.url }}" alt="{{ item.user.username }}" />
+                    </div>
+                </div>
+                {% endif %}
+                <p class="mb-1 pl-1 text-sm">@{{ item.user.username }}</p>
+
+            </span>
+            {% if item.returned %}
+            {% if item.type == "Lost" %}
+            <span class="badge badge-sm text-white bg-red-500 py-2.5">{{ item.type }}</span>
+            {% else %}
+            <span class="badge badge-sm text-white bg-green-600 py-2.5">{{ item.type }}</span>
+            {% endif %}
+            {% endif %}
+            <h2 class="text-2xl font-bold mb-2">{{ item.name }}</h2>
+            <div class="flex flex-col text-black/50">
+                <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd"
+                            d="M4.5 2A2.5 2.5 0 0 0 2 4.5v3.879a2.5 2.5 0 0 0 .732 1.767l7.5 7.5a2.5 2.5 0 0 0 3.536 0l3.878-3.878a2.5 2.5 0 0 0 0-3.536l-7.5-7.5A2.5 2.5 0 0 0 8.38 2H4.5ZM5 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <p class="pl-1">{{ item.category }}</p>
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd"
+                            d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <p class="pl-1">{{ item.location }}</p>
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd"
+                            d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <p class="pl-1">{{ item.date }}</p>
+                </span>
+                {% if item.returned %}
+                <p class="text-sm mt-2">
+                    {% if item.type == "Lost" %}
+                    <span>Found by </span>
+                    <span class="font-bold">@{{ item.found_by }}</span>
+                    <span> on {{ item.date }}</span>
+                    {% else %}
+                    <span>Returned to </span>
+                    <span class="font-bold">@{{ item.returned_to }}</span>
+                    <span> on {{ item.date }}</span>
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</a>
