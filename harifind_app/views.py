@@ -167,17 +167,20 @@ def delete_item(request, item_id):
 @login_required(login_url="/login")
 def view_user(request, username):
     viewing_user = get_object_or_404(models.User, username=username)
-    lost_count = viewing_user.reported_items.filter(type=models.Item.Type.LOST).count()
-    found_count = viewing_user.reported_items.filter(
+    reported_lost = viewing_user.reported_items.filter(
+        type=models.Item.Type.LOST
+    ).order_by("-updated_at")
+    reported_found = viewing_user.reported_items.filter(
         type=models.Item.Type.FOUND
-    ).count()
+    ).order_by("-updated_at")
+
     return render(
         request,
         "view-user.html",
         {
             "viewing_user": viewing_user,
-            "lost_count": lost_count,
-            "found_count": found_count,
+            "reported_lost": reported_lost,
+            "reported_found": reported_found,
         },
     )
 

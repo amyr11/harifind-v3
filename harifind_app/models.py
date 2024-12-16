@@ -202,6 +202,15 @@ class User(AbstractUser):
             subscription.active = False
             subscription.save()
 
+    def display_year_level(self):
+        import inflect
+
+        p = inflect.engine()
+        if self.year_level:
+            return f"{p.ordinal(self.year_level)} year"
+
+        return ""
+
 
 # Create your models here.
 class Item(models.Model):
