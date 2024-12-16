@@ -237,7 +237,7 @@ def view_returned_items(request):
         models.Item.objects.filter(item_query(query) & Q(returned=True)).order_by(
             "-updated_at"
         ),
-        "Lost Items",
+        "Returned Items",
         query,
     )
 
