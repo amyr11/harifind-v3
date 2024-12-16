@@ -11,66 +11,138 @@
 {% block title %}{{ viewing_user.username }}{% endblock %}
 
 {% block content %}
-<!-- USER DETAILS -->
-<div class="prose">
-    <h1>{{ viewing_user.first_name }} {{ viewing_user.last_name }}</h1>
-    {% if viewing_user.image %}
-    <img src="{{ viewing_user.image.url }}" alt="{{ viewing_user.first_name }} {{ viewing_user.last_name }}"
-        class="w-32" />
-    {% else %}
-    <img src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg"
-        alt="{{ viewing_user.first_name }} {{ viewing_user.last_name }}" class="w-32" />
-    {% endif %}
-    <!-- email -->
-    <p>Email: {{ viewing_user.email }}</p>
-    <!-- year level -->
-    <p>Year level: {{ viewing_user.year_level }}</p>
-    <!-- degree -->
-    <p>Degree: {{ viewing_user.get_degree_display }}</p>
-    <!-- date joined -->
-    <p>Joined: {{ viewing_user.date_joined }}</p>
-    <h1>Statistics</h1>
-    <!-- reported items -->
-    <p>Lost items: {{ lost_count }}</p>
-    <p>Found items: {{ found_count }}</p>
-    <h1>Reported items</h1>
-    <!-- reported items -->
-    <ul>
-        {% for item in viewing_user.reported_items.all %}
-        <li>
-            <div class="flex gap-2">
-                <a href="{% url 'view_item' item.id %}">{{ item.name }}</a>
-                {% if item.user == user %}
-                <span>|</span>
-                <a href="{% url 'edit_item' item.id %}">Edit</a>
-                <span>|</span>
-                <form id="delete-form" method="post" action="{% url 'delete_item' item.id %}">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirmDelete()">
-                        <a>Delete</a>
-                    </button>
-                </form>
-                {% endif %}
-            </div>
-            <ul>
-                <img src="{{ item.image.url }}" alt="{{ item.name }}" />
-                <li>Type: {{ item.type }}</li>
-                <li>Category: {{ item.category }}</li>
-                <li>Description: {{ item.description }}</li>
-                <li>Date reported: {{ item.date }}</li>
-                <li>Location: {{ item.location }}</li>
-                <li>Returned: {{ item.returned }}</li>
-                {% if item.type == "Lost" %}
-                <li>Found by: {{ item.found_by }}</li>
+<div class="container mx-auto flex flex-col gap-4 max-w-5xl">
+    <!-- User Details Card -->
+    <c-light-card>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
+            <figure class="mx-auto sm:mx-0">
+                {% if viewing_user.image %}
+                <img src="{{ viewing_user.image.url }}" alt="{{ viewing_user.first_name }} {{ viewing_user.last_name }}"
+                    class="rounded-full w-48 h-48 object-cover" />
                 {% else %}
-                <li>Returned to: {{ item.returned_to }}</li>
+                <img src="https://t3.ftcdn.net/jpg/09/64/89/20/360_F_964892089_vioRltmAxaoQEBLtYtChVBxIzDWwhA3T.jpg"
+                    alt="{{ viewing_user.first_name }} {{ viewing_user.last_name }}"
+                    class="rounded-full w-48 h-48 object-cover" />
                 {% endif %}
-                <li>Returned date: {{ item.returned_date }}</li>
-                <li>Created at: {{ item.created_at }}</li>
-                <li>Updated at: {{ item.updated_at }}</li>
-            </ul>
-        </li>
-        {% endfor %}
-    </ul>
+            </figure>
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-2 flex-col items-center sm:flex-row">
+                    <h2 class="card-title text-3xl text-center sm:text-start">{{ viewing_user.first_name }} {{
+                        viewing_user.last_name
+                        }}
+                    </h2>
+                    <span class="badge">@{{ viewing_user.username }}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <c-icon-text>
+                        <c-slot name="icon">
+                            <div class="mt-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path
+                                        d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" />
+                                    <path
+                                        d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" />
+                                </svg>
+                            </div>
+                        </c-slot>
+                        <c-slot name="text">{{ viewing_user.email }}</c-slot>
+                    </c-icon-text>
+                    <c-icon-text>
+                        <c-slot name="icon">
+                            <div class="mt-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path fill-rule="evenodd"
+                                        d="M9.664 1.319a.75.75 0 0 1 .672 0 41.059 41.059 0 0 1 8.198 5.424.75.75 0 0 1-.254 1.285 31.372 31.372 0 0 0-7.86 3.83.75.75 0 0 1-.84 0 31.508 31.508 0 0 0-2.08-1.287V9.394c0-.244.116-.463.302-.592a35.504 35.504 0 0 1 3.305-2.033.75.75 0 0 0-.714-1.319 37 37 0 0 0-3.446 2.12A2.216 2.216 0 0 0 6 9.393v.38a31.293 31.293 0 0 0-4.28-1.746.75.75 0 0 1-.254-1.285 41.059 41.059 0 0 1 8.198-5.424ZM6 11.459a29.848 29.848 0 0 0-2.455-1.158 41.029 41.029 0 0 0-.39 3.114.75.75 0 0 0 .419.74c.528.256 1.046.53 1.554.82-.21.324-.455.63-.739.914a.75.75 0 1 0 1.06 1.06c.37-.369.69-.77.96-1.193a26.61 26.61 0 0 1 3.095 2.348.75.75 0 0 0 .992 0 26.547 26.547 0 0 1 5.93-3.95.75.75 0 0 0 .42-.739 41.053 41.053 0 0 0-.39-3.114 29.925 29.925 0 0 0-5.199 2.801 2.25 2.25 0 0 1-2.514 0c-.41-.275-.826-.541-1.25-.797a6.985 6.985 0 0 1-1.084 3.45 26.503 26.503 0 0 0-1.281-.78A5.487 5.487 0 0 0 6 12v-.54Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </c-slot>
+                        <c-slot name="text">{{ viewing_user.display_year_level }} {{ viewing_user.get_degree_display
+                            }}</c-slot>
+                    </c-icon-text>
+                    <c-icon-text>
+                        <c-slot name="icon">
+                            <div class="mt-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="size-5">
+                                    <path
+                                        d="M10 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H10ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V12ZM11.25 10.005c0-.417.338-.755.755-.755h2a.755.755 0 1 1 0 1.51h-2a.755.755 0 0 1-.755-.755ZM6.005 11.25a.755.755 0 1 0 0 1.51h4a.755.755 0 1 0 0-1.51h-4Z" />
+                                    <path fill-rule="evenodd"
+                                        d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </c-slot>
+                        <c-slot name="text">Joined {{ viewing_user.date_joined|date:"F d, Y" }}</c-slot>
+                    </c-icon-text>
+                </div>
+            </div>
+        </div>
+    </c-light-card>
+
+    <!-- Statistics Row -->
+    <div class="stats w-full border-2 border-gray-500/10 bg-white/50">
+        <div class="stat">
+            <div class="stat-figure text-black/50">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+            </div>
+            <div class="stat-title">Lost Items</div>
+            <div class="stat-value">{{ reported_lost.count }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-figure text-black/50">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+            </div>
+            <div class="stat-title">Found Items</div>
+            <div class="stat-value">{{ reported_found.count }}</div>
+        </div>
+    </div>
+
+    <!-- Daisy UI Tabs for Lost and Found Items -->
+    <div role="tablist" class="tabs tabs-lifted">
+        <input type="radio" name="my_tabs_2" role="tab" class="tab !w-28" aria-label="Lost Items" id="lost-items-tab"
+            checked="checked" />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+            {% if not reported_lost %}
+            <div class="prose">
+                <p>No items found</p>
+            </div>
+            {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for item in reported_lost %}
+                <c-listing-card-action :item="item" />
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <input type="radio" name="my_tabs_2" role="tab" class="tab !w-28" aria-label="Found Items"
+            id="found-items-tab" />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+            {% if not reported_found %}
+            <div class="prose">
+                <p>No items found</p>
+            </div>
+            {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for item in reported_found %}
+                <c-listing-card-action :item="item" />
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.contrib.auth import logout
 from . import models
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 
 # Create your views here.
@@ -88,6 +89,7 @@ def report_found(request):
 @login_required(login_url="/login")
 def view_item(request, item_id):
     item = get_object_or_404(models.Item, id=item_id)
+    comments = models.Comment.objects.filter(item=item).order_by("-created_at")
     comment_form = forms.CommentForm()
     return_form = forms.ReturnForm(instance=item)
     found_form = forms.FoundForm(instance=item)
@@ -97,6 +99,7 @@ def view_item(request, item_id):
         "view-item.html",
         {
             "item": item,
+            "comments": comments,
             "comment_form": comment_form,
             "return_form": return_form,
             "found_form": found_form,
@@ -164,60 +167,81 @@ def delete_item(request, item_id):
 @login_required(login_url="/login")
 def view_user(request, username):
     viewing_user = get_object_or_404(models.User, username=username)
-    lost_count = viewing_user.reported_items.filter(type=models.Item.Type.LOST).count()
-    found_count = viewing_user.reported_items.filter(
+    reported_lost = viewing_user.reported_items.filter(
+        type=models.Item.Type.LOST
+    ).order_by("-updated_at")
+    reported_found = viewing_user.reported_items.filter(
         type=models.Item.Type.FOUND
-    ).count()
+    ).order_by("-updated_at")
+
     return render(
         request,
         "view-user.html",
         {
             "viewing_user": viewing_user,
-            "lost_count": lost_count,
-            "found_count": found_count,
+            "reported_lost": reported_lost,
+            "reported_found": reported_found,
         },
     )
 
 
-def listings(request, items, title):
+def listings(request, items, title, query=""):
     return render(
         request,
         "listings.html",
         {
             "items": items,
             "title": title,
+            "query": query,
         },
+    )
+
+
+def item_query(query):
+    return (
+        Q(name__icontains=query)
+        | Q(description__icontains=query)
+        | Q(category__icontains=query)
+        | Q(location__icontains=query)
     )
 
 
 @login_required(login_url="/login")
 def view_lost_items(request):
+    query = request.GET.get("query", "")
     return listings(
         request,
-        models.Item.objects.filter(type=models.Item.Type.LOST, returned=False).order_by(
-            "-updated_at"
-        ),
+        models.Item.objects.filter(
+            item_query(query) & Q(type=models.Item.Type.LOST, returned=False)
+        ).order_by("-updated_at"),
         "Lost Items",
+        query,
     )
 
 
 @login_required(login_url="/login")
 def view_found_items(request):
+    query = request.GET.get("query", "")
     return listings(
         request,
         models.Item.objects.filter(
-            type=models.Item.Type.FOUND, returned=False
+            item_query(query) & Q(type=models.Item.Type.FOUND, returned=False)
         ).order_by("-updated_at"),
         "Found Items",
+        query,
     )
 
 
 @login_required(login_url="/login")
 def view_returned_items(request):
+    query = request.GET.get("query", "")
     return listings(
         request,
-        models.Item.objects.filter(returned=True).order_by("-returned_date"),
+        models.Item.objects.filter(item_query(query) & Q(returned=True)).order_by(
+            "-updated_at"
+        ),
         "Returned Items",
+        query,
     )
 
 
