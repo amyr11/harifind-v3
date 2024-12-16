@@ -90,3 +90,5 @@ db.sqlite3
 
 theme/static/css/dist/
 media/
+
+.venv
