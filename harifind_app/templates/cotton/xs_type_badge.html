@@ -1,0 +1,7 @@
+{% if type == "Lost" %}
+<span class="badge badge-sm text-white bg-red-500 py-2.5">{{ type }}</span>
+{% elif type == "Found" %}
+<span class="badge badge-sm text-white bg-green-600 py-2.5">{{ type }}</span>
+{% elif type == "Returned" %}
+<span class="badge badge-sm text-white bg-cyan-600 py-2.5">{{ type }}</span>
+{% endif %}

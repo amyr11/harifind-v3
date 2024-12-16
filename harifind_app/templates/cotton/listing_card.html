@@ -24,13 +24,7 @@
                     <p class="mb-1 pl-1 text-sm">@{{ item.user.username }}</p>
 
                 </span>
-                {% if item.returned %}
-                {% if item.type == "Lost" %}
-                <span class="badge badge-sm text-white bg-red-500 py-2.5">{{ item.type }}</span>
-                {% else %}
-                <span class="badge badge-sm text-white bg-green-600 py-2.5">{{ item.type }}</span>
-                {% endif %}
-                {% endif %}
+                <c-xs-type-badge type="{% if item.returned %}{{ 'Returned' }}{% else %}{{ item.type }}{% endif %}" />
                 <h2 class="text-2xl font-bold mb-2">{{ item.name }}</h2>
                 <div class="flex flex-col text-black/50">
                     <span class="flex items-center gap-1">
