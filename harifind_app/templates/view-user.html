@@ -112,33 +112,36 @@
 
     <!-- Daisy UI Tabs for Lost and Found Items -->
     <div role="tablist" class="tabs tabs-lifted">
-        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Lost Items" id="lost-items-tab"
+        <input type="radio" name="my_tabs_2" role="tab" class="tab !w-28" aria-label="Lost Items" id="lost-items-tab"
             checked="checked" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
             {% if not reported_lost %}
             <div class="prose">
                 <p>No items found</p>
             </div>
-            {% endif %}
+            {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for item in reported_lost %}
                 <c-listing-card-action :item="item" />
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
 
-        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Found Items" id="found-items-tab" />
+        <input type="radio" name="my_tabs_2" role="tab" class="tab !w-28" aria-label="Found Items"
+            id="found-items-tab" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
             {% if not reported_found %}
             <div class="prose">
                 <p>No items found</p>
             </div>
-            {% endif %}
+            {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for item in reported_found %}
                 <c-listing-card-action :item="item" />
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
