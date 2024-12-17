@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ["harifind.help", "localhost"]
+ALLOWED_HOSTS = ["www.harifind.help", "harifind.help", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = ["https://harifind.help"]
 
