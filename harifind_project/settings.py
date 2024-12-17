@@ -32,6 +32,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ["harifind.help", "localhost"]
 
+CSRF_TRUSTED_ORIGINS = ["https://harifind.help"]
 
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
